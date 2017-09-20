@@ -3241,7 +3241,7 @@ public class HttpRequest {
     return this;
   }
 
-  public HttpRequest execute(String body, String charset) {
+  public HttpRequest execute(String body) {
     return execute(body, CHARSET_UTF8);
   }
 
