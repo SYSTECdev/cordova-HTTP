@@ -3241,6 +3241,20 @@ public class HttpRequest {
     return this;
   }
 
+  public HttpRequest execute(String body, String charset) {
+    return execute(body, CHARSET_UTF8);
+  }
+
+  public HttpRequest execute(String body, String charset) {
+    try {
+      openOutput();
+      output.write(body.getBytes(charset));
+    } catch (IOException e) {
+      throw new HttpRequestException(e);
+    }
+    return this;
+  }
+
   /**
    * Write the values in the map as encoded form data to the request body
    *
