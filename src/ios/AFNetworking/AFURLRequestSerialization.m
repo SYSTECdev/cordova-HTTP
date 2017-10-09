@@ -378,18 +378,29 @@ forHTTPHeaderField:(NSString *)field
     __block AFStreamingMultipartFormData *formData = [[AFStreamingMultipartFormData alloc] initWithURLRequest:mutableRequest stringEncoding:NSUTF8StringEncoding];
 
     if (parameters) {
-        for (AFQueryStringPair *pair in AFQueryStringPairsFromDictionary(parameters)) {
+        if ([parameters isKindOfClass:[NSString class]]) {
             NSData *data = nil;
-            if ([pair.value isKindOfClass:[NSData class]]) {
-                data = pair.value;
-            } else if ([pair.value isEqual:[NSNull null]]) {
-                data = [NSData data];
-            } else {
-                data = [[pair.value description] dataUsingEncoding:self.stringEncoding];
-            }
-
+            NSString *params = (NSString *)parameters;
+            NSString *paramsStr = [params stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            data = [paramsStr dataUsingEncoding:NSUTF8StringEncoding];
             if (data) {
-                [formData appendPartWithFormData:data name:[pair.field description]];
+                [formData appendPartWithFormData:data name:@""];
+            }
+        }
+        else {
+            for (AFQueryStringPair *pair in AFQueryStringPairsFromDictionary(parameters)) {
+                NSData *data = nil;
+                if ([pair.value isKindOfClass:[NSData class]]) {
+                    data = pair.value;
+                } else if ([pair.value isEqual:[NSNull null]]) {
+                    data = [NSData data];
+                } else {
+                    data = [[pair.value description] dataUsingEncoding:self.stringEncoding];
+                }
+
+                if (data) {
+                    [formData appendPartWithFormData:data name:[pair.field description]];
+                }
             }
         }
     }
